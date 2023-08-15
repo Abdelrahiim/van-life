@@ -76,7 +76,7 @@ const HostVanDetailLayout = () => {
 								Photos
 							</NavLink>
 						</nav>
-						<Outlet context={currentVan} />
+						<Outlet context={currentVan satisfies Data} />
 					</div>
 				</section>
 			) : (
