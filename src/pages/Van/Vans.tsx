@@ -1,6 +1,6 @@
 import axios, { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 export type Data = {
 	id: number;
@@ -9,7 +9,7 @@ export type Data = {
 	description: string;
 	imageUrl: string;
 	type: string;
-	hostId:string
+	hostId: string;
 };
 type Vans = {
 	vans: Data[];
@@ -17,6 +17,10 @@ type Vans = {
 
 export default function Vans() {
 	const [vans, setVans] = useState<Data[]>([]);
+	const [searchParams, setSearchParams] = useSearchParams();
+
+	const typeFilter = searchParams.get("type");
+	
 
 	const fetchDate = async () => {
 		try {
@@ -27,11 +31,16 @@ export default function Vans() {
 			console.log(e.status);
 		}
 	};
+
 	useEffect(() => {
 		fetchDate();
 	}, []);
 
-	const vanELements = vans.map((van) => (
+	const displayedVans = typeFilter
+		? vans.filter((van) => van.type.toLowerCase() === typeFilter)
+		: vans;
+	// setVans(displayedVans)
+	const vanELements = displayedVans.map((van) => (
 		<div key={van.id} className="van-tile">
 			<Link to={`/vans/${van.id}`}>
 				<img src={van.imageUrl} />
@@ -46,6 +55,20 @@ export default function Vans() {
 	return (
 		<div className="van-list-container">
 			<h1>Explore Our Van Options</h1>
+			<div className="van-list-filter-buttons">
+				<Link className="van-type simple" to="?type=simple">
+					Simple
+				</Link>
+				<button className="van-type rugged" onClick={()=> setSearchParams("type=rugged")}>
+					Rugged
+				</button>
+				<button className="van-type luxury" onClick={()=> setSearchParams({type:"luxury"})}>
+					Luxury
+				</button>
+				<Link className="van-type clear-filters" to=".">
+					Clear Filters
+				</Link>
+			</div>
 			<div className="van-list">
 				{vans.length ? vanELements : <h2>Loading...</h2>}
 			</div>

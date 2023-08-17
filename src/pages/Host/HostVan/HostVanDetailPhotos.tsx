@@ -4,7 +4,11 @@ import { Data } from "../../Van/Vans";
 const HostVanDetailPhotos = () => {
 	const { imageUrl } = useOutletContext<Data>();
 
-	return <img src={imageUrl} className="host-van-detail-image" />;
+	return (
+		<a href={imageUrl}>
+			<img src={imageUrl} className="host-van-detail-image" />
+		</a>
+	);
 };
 
 export default HostVanDetailPhotos;

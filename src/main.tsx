@@ -15,8 +15,7 @@ import React from "react";
 import HostVans from "./pages/Host/HostVan/HostVans";
 import HostVanDetail from "./pages/Host/HostVan/HostVanDetail";
 import HostVanDetailLayout from "./pages/Host/HostVan/HostVanDetailLayout";
-
-import HostVanDetailPrice from "./pages/Host/HostVan/HostVanDetailPrice";
+import HostVanDetailPricing from "./pages/Host/HostVan/HostVanDetailPricing";
 import HostVanDetailPhotos from "./pages/Host/HostVan/HostVanDetailPhotos";
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -44,7 +43,7 @@ const App = () => {
 								<Route index element={<HostVanDetail />} />
 								<Route
 									path="price"
-									element={<HostVanDetailPrice />}
+									element={<HostVanDetailPricing />}
 								/>
 								<Route
 									path="photos"
