@@ -1,36 +1,28 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
-import { Data } from "../../Van/Vans";
-import { Link } from "react-router-dom";
+import { Data, fetchHostVans } from "../../../../api";
+import { Link, LoaderFunctionArgs, useLoaderData } from "react-router-dom";
+import { requireAuth } from "../../../../utils";
 
-type Vans = {
-	vans: Data[];
+// eslint-disable-next-line react-refresh/only-export-components
+export const loader = async ({request}:LoaderFunctionArgs) => {
+	// const isLogged = false ;
+	// if (!isLogged){
+	// 	return redirect('/login')
+	// }
+	const returnValue = (await requireAuth(request))
+		? await requireAuth(request)
+		: await fetchHostVans();
+	return returnValue;
 };
 
 const HostVans = () => {
-	const [vans, setVans] = useState<Data[]>([]);
+	// const [vans, setVans] = useState<Data[]>([]);
 
-	const fetchDate = async () => {
-		try {
-			const response: AxiosResponse<Vans> = await axios.get(
-				"/api/host/vans"
-			);
-			console.log(response);
-			setVans(response.data.vans);
-		} catch (err) {
-			const e = err as AxiosError;
-			console.log(e.status);
-		}
-	};
-	useEffect(() => {
-		fetchDate();
-	}, []);
+	const vans = useLoaderData() as Data[];
+	// useEffect(() => {
+	// 	fetchDate();
+	// }, []);
 	const hostVansEls = vans.map((van) => (
-		<Link
-			to={`/host/vans/${van.id}`}
-			key={van.id}
-			className="host-van-link-wrapper"
-		>
+		<Link to={van.id} key={van.id} className="host-van-link-wrapper">
 			<div className="host-van-single" key={van.id}>
 				<img src={van.imageUrl} alt={`Photo of ${van.name}`} />
 				<div className="host-van-info">
@@ -45,11 +37,7 @@ const HostVans = () => {
 		<section>
 			<h1 className="host-vans-title">Your listed vans</h1>
 			<div className="host-vans-list">
-				{vans.length > 0 ? (
-					<section>{hostVansEls}</section>
-				) : (
-					<h2>Loading...</h2>
-				)}
+				<section>{hostVansEls}</section>
 			</div>
 		</section>
 	);

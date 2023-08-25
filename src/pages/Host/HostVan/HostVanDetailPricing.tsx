@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom";
-import { Data } from "../../Van/Vans";
+import {Data} from "../../../../api"
 
 const HostVanDetailPricing = () => {
 	const { price } = useOutletContext<Data>();

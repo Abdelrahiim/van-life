@@ -1,39 +1,21 @@
-import axios, { AxiosError, AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+/* eslint-disable react-refresh/only-export-components */
 
-export type Data = {
-	id: number;
-	name: string;
-	price: number;
-	description: string;
-	imageUrl: string;
-	type: string;
-	hostId: string;
-};
-type Vans = {
-	vans: Data[];
+import { Link, useSearchParams, useLoaderData } from "react-router-dom";
+import { Data, fetchVans } from "../../../api";
+
+
+
+
+export const loader = async () => {
+	return fetchVans()
 };
 
 export default function Vans() {
-	const [vans, setVans] = useState<Data[]>([]);
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const typeFilter = searchParams.get("type");
 
-	const fetchDate = async () => {
-		try {
-			const response: AxiosResponse<Vans> = await axios.get("/api/vans");
-			setVans(response.data.vans);
-		} catch (err) {
-			const e = err as AxiosError;
-			console.log(e.status);
-		}
-	};
-
-	useEffect(() => {
-		fetchDate();
-	}, []);
+	const vans = useLoaderData() as Data[];
 
 	const displayedVans = typeFilter
 		? vans.filter((van) => van.type.toLowerCase() === typeFilter)
@@ -41,7 +23,7 @@ export default function Vans() {
 	// setVans(displayedVans)
 	const vanELements = displayedVans.map((van) => (
 		<div key={van.id} className="van-tile">
-			<Link to={`/vans/${van.id}`}>
+			<Link to={van.id} state={{ search: searchParams.toString() }}>
 				<img src={van.imageUrl} />
 				<div className="van-info">
 					<h3>{van.name}</h3>
@@ -55,18 +37,27 @@ export default function Vans() {
 		<div className="van-list-container">
 			<h1>Explore Our Van Options</h1>
 			<div className="van-list-filter-buttons">
-				<Link className={`van-type simple ${typeFilter ==='simple' && "selected"}`} to="?type=simple">
+				<Link
+					className={`van-type simple ${
+						typeFilter === "simple" && "selected"
+					}`}
+					to="?type=simple"
+				>
 					Simple
 				</Link>
 				<button
-					className={`van-type rugged  ${typeFilter ==='simple' && "rugged"}`}
+					className={`van-type rugged  ${
+						typeFilter === "rugged" && "selected"
+					}`}
 					onClick={() => setSearchParams("type=rugged")}
 				>
 					Rugged
 				</button>
 
 				<button
-					className="van-type luxury"
+					className={`van-type luxury ${
+						typeFilter === "luxury" && "selected"
+					}`}
 					onClick={() => setSearchParams({ type: "luxury" })}
 				>
 					Luxury
@@ -77,9 +68,7 @@ export default function Vans() {
 					</Link>
 				)}
 			</div>
-			<div className="van-list">
-				{vans.length ? vanELements : <h2>Loading...</h2>}
-			</div>
+			<div className="van-list">{vanELements}</div>
 		</div>
 	);
 }
